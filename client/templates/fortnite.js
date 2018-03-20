@@ -1,6 +1,10 @@
 import './fortnite.html';
 
-Template.fortnite.onRendered(function() {});
+Template.fortnite.onCreated(function() {
+
+  this.subscribe('fortnitePlayers');
+
+});
 
 Template.fortnite.helpers({
 
@@ -17,7 +21,7 @@ Template.fortnite.events({
     e.preventDefault();
 
     const form = tpl.$('form').serializeJSON();
-    if(_.isEmpty(form.platform) || _.isEmpty(form.epicNickname)) return;
+    if(_.isEmpty(form.platform) || _.isEmpty(form.epicNickname)) return;
     // console.log(form);
     Router.go('fortnitePlayer', {platform: form.platform.toLowerCase(), epicNickname: form.epicNickname.toLowerCase()});
   }

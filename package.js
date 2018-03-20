@@ -21,11 +21,12 @@ Package.onUse(function(api) {
     'meteor-platform',
     'templating',
     'pcel:serialize',
-    'fortawesome:fontawesome'
+    'fortawesome:fontawesome',
   ]);
 
   api.add_files([
-    'server/methods.js'
+    'server/methods.js',
+    'server/publish.js',
   ], 'server');
 
   api.add_files([
