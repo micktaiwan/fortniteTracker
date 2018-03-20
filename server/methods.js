@@ -17,7 +17,7 @@ Meteor.methods({
       if(diff < 60 * 5) return pseudo + "'s data last fetched " + Math.round(diff) + 's ago';
     }
 
-    const apikey = Meteor.settings.forniteAPIKey;
+    const apikey = Meteor.settings.fortniteAPIKey;
     HTTP.get("https://api.fortnitetracker.com/v1/profile/" + platform + "/" + pseudo + "", {
       headers: {
         'Access-Control-Allow-Origin': '*',
