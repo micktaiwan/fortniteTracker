@@ -1,5 +1,11 @@
 import './fortnite-player.html';
 
+Template.fortnitePlayer.onCreated(function() {
+
+  this.subscribe('fortniteHistory');
+
+});
+
 Template.fortnitePlayer.onRendered(function() {
 
   if(this.data && this.data.platform && this.data.epicNickname)
