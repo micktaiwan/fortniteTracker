@@ -17,13 +17,14 @@ Meteor.methods({
       if(diff < 60 * 5) return pseudo + "'s data last fetched " + Math.round(diff) + 's ago';
     }
 
+    const apikey = Meteor.settings.forniteAPIKey;
     HTTP.get("https://api.fortnitetracker.com/v1/profile/" + platform + "/" + pseudo + "", {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, PUT, DELETE, GET, OPTIONS',
         'Access-Control-Request-Method': '*',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-        "TRN-Api-Key": "a55ca4b0-1760-429d-86b2-dc7dfac7ee41"
+        "TRN-Api-Key": apikey
       }
     }, function(error, result) {
       if(error) {
