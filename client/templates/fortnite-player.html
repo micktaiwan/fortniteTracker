@@ -1,0 +1,185 @@
+<template name="fortnitePlayer">
+  {{#with fortnite}}
+    <div class="page-header">
+      <h1 class="titre">{{data.epicUserHandle}}
+        <small>{{formatDate createdAt 'long' 'fr'}}</small>
+      </h1>
+
+      <div class="hidden-xs">
+        <ol class="breadcrumb">
+          <li><a href="/" title="Accueil"><i class="fa fa-home"></i></a></li>
+          <li><a href="{{pathFor 'fortnite'}}" title="Fortnite">Fortnite</a></li>
+          <li class="active">{{data.epicUserHandle}}</li>
+        </ol>
+      </div>
+    </div>
+
+    <p>Platform : {{data.platformNameLong}}</p>
+
+    <h2>General</h2>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Score</th>
+        <th>Matches Played</th>
+        <th>Wins</th>
+        <th>Win%</th>
+        <th>Kills</th>
+        <th>K/d</th>
+        <th>Kills Per Min</th>
+        <th>Time Played</th>
+        <th>Avg Survival Time</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>{{data.lifeTimeStats.[6].value}}</td>
+        <td>{{data.lifeTimeStats.[7].value}}</td>
+        <td>{{data.lifeTimeStats.[8].value}}</td>
+        <td>{{data.lifeTimeStats.[9].value}}</td>
+        <td>{{data.lifeTimeStats.[10].value}}</td>
+        <td>{{data.lifeTimeStats.[11].value}}</td>
+        <td>{{data.lifeTimeStats.[12].value}}</td>
+        <td>{{data.lifeTimeStats.[13].value}}</td>
+        <td>{{data.lifeTimeStats.[14].value}}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="row">
+      <div class="col-sm-4">
+        {{#with group 'p2'}}
+          {{> fortnitePlayerStats}}
+        {{/with}}
+
+        <!--<div class="m-t-20">-->
+        <!--{{{stats 'p2'}}}-->
+        <!--</div>-->
+      </div>
+      <div class="col-sm-4">
+        {{#with group 'p10'}}
+          {{> fortnitePlayerStats}}
+        {{/with}}
+      </div>
+      <div class="col-sm-4">
+        {{#with group 'p9'}}
+          {{> fortnitePlayerStats}}
+        {{/with}}
+      </div>
+    </div>
+
+    <h2>Recent matches</h2>
+
+    {{#each data.recentMatches}}
+      <div class="well">
+        {{formatDate dateCollected 'long' 'fr'}}<br>
+        Matches : {{matches}}<br>
+        Kills : {{kills}}<br>
+        Score : +{{score}}
+      </div>
+    {{/each}}
+    <p>
+    </p>
+
+  {{else}}
+    <div class="page-header">
+      <h1 class="titre">Player Not Found</h1>
+
+      <div class="hidden-xs">
+        <ol class="breadcrumb">
+          <li><a href="/" title="Accueil"><i class="fa fa-home"></i></a></li>
+          <li><a href="{{pathFor 'fortnite'}}" title="Fortnite">Fortnite</a></li>
+          <li class="active">Player Not Found</li>
+        </ol>
+      </div>
+    </div>
+  {{/with}}
+</template>
+
+<template name="fortnitePlayerStats">
+
+  <div class="well">
+    <h2 class="text-center">{{groupText}}</h2>
+
+    <div class="row">
+      <div class="col-sm-6 text-right bold">Kills :</div>
+      <div class="col-sm-6">{{kills.displayValue}}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 text-right bold">K/d :</div>
+      <div class="col-sm-6">{{kd.displayValue}}</div>
+    </div>
+    <div class="row m-t-10">
+      <div class="col-sm-6 text-right bold">Matches :</div>
+      <div class="col-sm-6">{{matches.displayValue}}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 text-right bold">Win % :</div>
+      <div class="col-sm-6">{{winRatio.displayValue}}</div>
+    </div>
+
+    <div class="row m-t-20">
+      <div class="col-sm-6 text-right bold">Top 1 :</div>
+      <div class="col-sm-6">{{top1.displayValue}}</div>
+    </div>
+    {{#if isGroup 'p9'}}
+      <div class="row">
+        <div class="col-sm-6 text-right bold">Top 3 :</div>
+        <div class="col-sm-6">{{top3.displayValue}}</div>
+      </div>
+    {{/if}}
+    {{#if isGroup 'p10'}}
+      <div class="row">
+        <div class="col-sm-6 text-right bold">Top 5 :</div>
+        <div class="col-sm-6">{{top5.displayValue}}</div>
+      </div>
+    {{/if}}
+    {{#if isGroup 'p9'}}
+      <div class="row">
+        <div class="col-sm-6 text-right bold">Top 6 :</div>
+        <div class="col-sm-6">{{top6.displayValue}}</div>
+      </div>
+    {{/if}}
+    {{#if isGroup 'p2'}}
+      <div class="row">
+        <div class="col-sm-6 text-right bold">Top 10 :</div>
+        <div class="col-sm-6">{{top10.displayValue}}</div>
+      </div>
+    {{/if}}
+    {{#if isGroup 'p10'}}
+      <div class="row">
+        <div class="col-sm-6 text-right bold">Top 12 :</div>
+        <div class="col-sm-6">{{top12.displayValue}}</div>
+      </div>
+    {{/if}}
+    {{#if isGroup 'p2'}}
+      <div class="row">
+        <div class="col-sm-6 text-right bold">Top 25 :</div>
+        <div class="col-sm-6">{{top25.displayValue}}</div>
+      </div>
+    {{/if}}
+
+    <div class="row m-t-20">
+      <div class="col-sm-6 text-right bold">Time played :</div>
+      <div class="col-sm-6">{{minutesPlayed.displayValue}}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 text-right bold">Avg Match Time :</div>
+      <div class="col-sm-6">{{avgTimePlayed.displayValue}}</div>
+    </div>
+
+    <div class="row m-t-20">
+      <div class="col-sm-6 text-right bold">Score :</div>
+      <div class="col-sm-6">{{score.displayValue}}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 text-right bold">TRN Rating :</div>
+      <div class="col-sm-6">{{trnRating.value}}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 text-right bold">Rank :</div>
+      <div class="col-sm-6">{{trnRating.rank}}</div>
+    </div>
+  </div>
+</template>

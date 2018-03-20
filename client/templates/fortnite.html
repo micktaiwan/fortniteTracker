@@ -1,0 +1,58 @@
+<template name="fortnite">
+  <h2>Recherche</h2>
+  <form class="m-b-50">
+    <div class="row">
+      <div class="col-sm-4">
+        <input name="platform" class="form-control" placeholder="platform (pc, xbl, psn)">
+      </div>
+      <div class="col-sm-4">
+        <input name="epicNickname" class="form-control" placeholder="Epic Pseudo">
+      </div>
+      <div class="col-sm-4">
+        <button class="btn btn-primary">ok</button>
+      </div>
+    </div>
+  </form>
+
+  <h2>Liste</h2>
+  <table class="table table-striped text-center">
+    <thead>
+    <tr>
+      <th></th>
+      <!--<th>Score Solo</th>-->
+      <!--<th>Score Duo</th>-->
+      <!--<th>Score Squad</th>-->
+      <!--<th>Score</th>-->
+      <th>Matches</th>
+      <th>Wins</th>
+      <th>Win%</th>
+      <th>Kills</th>
+      <th><i class="fa fa-caret-down"></i> K/death</th>
+      <th>Kills/m</th>
+      <th>Time Played</th>
+      <th>Avg Survival Time</th>
+      <th>Updated At</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each players}}
+      <tr>
+        <td><a href="{{pathFor 'fortnitePlayer'}}">{{last.epicUserHandle}}</a></td>
+        <!--<td>{{last.stats.p2.score.displayValue}}</td>-->
+        <!--<td>{{last.stats.p10.score.displayValue}}</td>-->
+        <!--<td>{{last.stats.p9.score.displayValue}}</td>-->
+        <!--<td>{{last.lifeTimeStats.[6].value}}</td>-->
+        <td>{{last.lifeTimeStats.[7].value}}</td>
+        <td>{{last.lifeTimeStats.[8].value}}</td>
+        <td>{{last.lifeTimeStats.[9].value}}</td>
+        <td>{{last.lifeTimeStats.[10].value}}</td>
+        <td>{{last.lifeTimeStats.[11].value}}</td>
+        <td>{{last.lifeTimeStats.[12].value}}</td>
+        <td>{{last.lifeTimeStats.[13].value}}</td>
+        <td>{{last.lifeTimeStats.[14].value}}</td>
+        <td>{{formatDate updatedAt 'dh'}}</td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</template>
