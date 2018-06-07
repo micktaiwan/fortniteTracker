@@ -22,11 +22,13 @@ Package.onUse(function(api) {
     'templating',
     'pcel:serialize',
     'fortawesome:fontawesome',
+    'percolate:synced-cron'
   ]);
 
   api.add_files([
     'server/methods.js',
     'server/publish.js',
+    'server/startup.js',
   ], 'server');
 
   api.add_files([

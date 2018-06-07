@@ -14,47 +14,54 @@ Meteor.methods({
       const lastTime = last.createdAt.getTime();
       const nowTime = now.getTime();
       diff = nowTime / 1000 - lastTime / 1000;
-      if(diff < 60 * 5) return pseudo + "'s data last fetched " + Math.round(diff) + 's ago';
+      if(diff < 60 * 5) return pseudo + "'s data last fetched " + Math.round(diff) + 's ago (less than 5 min, so not fetched)';
     }
 
     const apikey = Meteor.settings.fortniteAPIKey;
     HTTP.get("https://api.fortnitetracker.com/v1/profile/" + platform + "/" + pseudo + "", {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, PUT, DELETE, GET, OPTIONS',
-        'Access-Control-Request-Method': '*',
-        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-        "TRN-Api-Key": apikey
-      }
-    }, function(error, result) {
-      if(error) {
-        console.error('http get FAILED!');
-        console.log(error);
-      }
-      else {
-        // console.log(result);
-        if(result.statusCode === 200 && !result.data.error) {
-          FortniteHistory.insert({
-            "platform": platform,
-            "epicNickname": pseudo,
-            createdAt: now,
-            data: result.data
-          });
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, PUT, DELETE, GET, OPTIONS',
+          'Access-Control-Request-Method': '*',
+          'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+          "TRN-Api-Key": apikey
+        }
+      }, function(error, result) {
+        if(error) {
+          console.error('http get FAILED!');
+          console.log(error);
+        }
+        else {
+          // console.log(result);
+          if(result.statusCode === 200) {
+            if(!result.data)
+              console.error('no data for ' + pseudo);
+            else if(result.data.error)
+              console.error(result.data.error);
+            else {
+              FortniteHistory.insert({
+                "platform": platform,
+                "epicNickname": pseudo,
+                createdAt: now,
+                data: result.data
+              });
 
-          FortnitePlayers.update({
-            "platform": platform,
-            "epicNickname": pseudo
-          }, {
-            $set: {
-              "platform": platform,
-              "epicNickname": pseudo,
-              updatedAt: now,
-              last: result.data
+              FortnitePlayers.update({
+                "platform": platform,
+                "epicNickname": pseudo
+              }, {
+                $set: {
+                  "platform": platform,
+                  "epicNickname": pseudo,
+                  updatedAt: now,
+                  last: result.data
+                }
+              }, {upsert: true});
             }
-          }, {upsert: true});
+          }
         }
       }
-    });
+    );
     return "Fetching data for " + pseudo + "..."
   }
 
