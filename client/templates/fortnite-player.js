@@ -26,6 +26,10 @@ const update_chart = function(platform, nickname) {
     const options = {
       'title': 'Kills per death in Solo',
       curveType: 'function',
+      lineWidth: 3,
+      pointSize: 10,
+      // pointShape: 'square',
+      pointColor: '#fff',
       'width': '100%',
       'height': 300
     };
@@ -41,7 +45,6 @@ const update_chart = function(platform, nickname) {
 
 Template.fortnitePlayer.onCreated(function() {
 
-  this.subscribe('fortniteHistory');
 
 });
 
@@ -53,7 +56,9 @@ Template.fortnitePlayer.onRendered(function() {
       Meteor.call('fortnite', that.data.platform, that.data.epicNickname, function(err, msg) {
         if(err) return console.error(err);
         if(msg) console.log(msg);
-        update_chart(that.data.platform, that.data.epicNickname);
+        that.subscribe('fortniteHistoryPlayer', that.data.platform, that.data.epicNickname, function() {
+          update_chart(that.data.platform, that.data.epicNickname);
+        });
       });
     else update_chart(that.data.platform, that.data.epicNickname);
   });
