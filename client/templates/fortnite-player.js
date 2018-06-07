@@ -3,44 +3,49 @@ import './fortnite-player.html';
 
 const update_chart = function(platform, nickname) {
 
-  console.log('updating chart...');
-  // Load the Visualization API and the corechart package.
-  google.charts.load('current', {'packages': ['corechart']});
+  Meteor.setTimeout(function() {
+    console.log('updating chart...');
+    if(!$('#chart_div').get(0)) return console.error('no div');
 
-  // Callback that creates and populates a data table,
-  // instantiates the pie chart, passes in the data and
-  // draws it.
-  function drawChart() {
+    // Load the Visualization API and the corechart package.
+    google.charts.load('current', {'packages': ['corechart']});
 
-    const history = FortniteHistory.find({epicNickname: nickname, platform: platform}, {sort: {createdAt: 1}}).fetch();
-    // Create the data table.
-    const data = new google.visualization.DataTable();
-    data.addColumn('datetime', 'Date');
-    data.addColumn('number', 'K/d');
-    _.each(history, function(h) {
-      data.addRows([
-        [h.createdAt, h.data.stats.p2.kd.valueDec],
-      ]);
-    });
-    // Set chart options
-    const options = {
-      'title': 'Kills per death in Solo',
-      curveType: 'function',
-      lineWidth: 3,
-      pointSize: 10,
-      // pointShape: 'square',
-      pointColor: '#fff',
-      'width': '100%',
-      'height': 300
-    };
+    // Callback that creates and populates a data table,
+    // instantiates the pie chart, passes in the data and
+    // draws it.
+    function drawChart() {
 
-    // Instantiate and draw our chart, passing in some options.
-    const chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-    chart.draw(data, options);
-  }
+      const history = FortniteHistory.find({epicNickname: nickname, platform: platform}, {sort: {createdAt: 1}}).fetch();
+      // Create the data table.
+      const data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Date');
+      data.addColumn('number', 'K/d');
+      _.each(history, function(h) {
+        const value = h.data.stats.p2.kd.valueDec;
+        data.addRows([
+          [h.createdAt, value],
+        ]);
+      });
+      // Set chart options
+      const options = {
+        'title': 'Kills per death in Solo',
+        // curveType: 'function',
+        lineWidth: 3,
+        pointSize: 10,
+        // pointShape: 'square',
+        pointColor: '#fff',
+        'width': '100%',
+        'height': 300
+      };
 
-  // Set a callback to run when the Google Visualization API is loaded.
-  google.charts.setOnLoadCallback(drawChart);
+      // Instantiate and draw our chart, passing in some options.
+      const chart = new google.visualization.LineChart($('#chart_div').get(0));
+      chart.draw(data, options);
+    }
+
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.charts.setOnLoadCallback(drawChart);
+  }, 1000);
 };
 
 Template.fortnitePlayer.onCreated(function() {
@@ -51,7 +56,9 @@ Template.fortnitePlayer.onCreated(function() {
 Template.fortnitePlayer.onRendered(function() {
 
   const that = this;
-  $.getScript("https://www.gstatic.com/charts/loader.js", function() {
+  this.autorun(function() {
+    if(!Session.get('googleChartsOK')) return;
+
     if(that.data && that.data.platform && that.data.epicNickname)
       Meteor.call('fortnite', that.data.platform, that.data.epicNickname, function(err, msg) {
         if(err) return console.error(err);
@@ -60,9 +67,11 @@ Template.fortnitePlayer.onRendered(function() {
           update_chart(that.data.platform, that.data.epicNickname);
         });
       });
-    else update_chart(that.data.platform, that.data.epicNickname);
-  });
+    else that.subscribe('fortniteHistoryPlayer', that.data.platform, that.data.epicNickname, function() {
+      update_chart(that.data.platform, that.data.epicNickname);
+    });
 
+  });
 
 });
 

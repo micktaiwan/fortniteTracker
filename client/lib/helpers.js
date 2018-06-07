@@ -17,3 +17,7 @@ Template.registerHelper("formatDate", function(date, format, lang) {
   }
   return moment(date).format(format);
 });
+
+$.getScript("https://www.gstatic.com/charts/loader.js", function() {
+  Session.set('googleChartsOK', true);
+});
