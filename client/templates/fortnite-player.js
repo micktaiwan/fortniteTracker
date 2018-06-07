@@ -1,5 +1,46 @@
 import './fortnite-player.html';
 
+
+const update_chart = function(platform, nickname) {
+
+  console.log('updating chart');
+  // Load the Visualization API and the corechart package.
+  google.charts.load('current', {'packages': ['corechart']});
+
+  // Callback that creates and populates a data table,
+  // instantiates the pie chart, passes in the data and
+  // draws it.
+  function drawChart() {
+
+    const history = FortniteHistory.find({epicNickname: nickname, platform: platform}, {sort: {createdAt: 1}}).fetch();
+    console.log(history);
+    // Create the data table.
+    const data = new google.visualization.DataTable();
+    data.addColumn('datetime', 'Date');
+    data.addColumn('number', 'K/d');
+    _.each(history, function(h) {
+      data.addRows([
+        [h.createdAt, h.data.stats.p2.kd.valueDec],
+      ]);
+    });
+    console.log(data);
+    // Set chart options
+    const options = {
+      'title': 'Kills per death in Solo',
+      curveType: 'function',
+      'width': '100%',
+      'height': 300
+    };
+
+    // Instantiate and draw our chart, passing in some options.
+    const chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+
+  // Set a callback to run when the Google Visualization API is loaded.
+  google.charts.setOnLoadCallback(drawChart);
+};
+
 Template.fortnitePlayer.onCreated(function() {
 
   this.subscribe('fortniteHistory');
@@ -8,11 +49,18 @@ Template.fortnitePlayer.onCreated(function() {
 
 Template.fortnitePlayer.onRendered(function() {
 
-  if(this.data && this.data.platform && this.data.epicNickname)
-    Meteor.call('fortnite', this.data.platform, this.data.epicNickname, function(err, msg) {
-      if(err) return console.error(err);
-      if(msg) console.log(msg);
-    });
+  const that = this;
+  $.getScript("https://www.gstatic.com/charts/loader.js", function() {
+    if(that.data && that.data.platform && that.data.epicNickname)
+      Meteor.call('fortnite', that.data.platform, that.data.epicNickname, function(err, msg) {
+        if(err) return console.error(err);
+        if(msg) console.log(msg);
+        update_chart(that.data.platform, that.data.epicNickname);
+      });
+    else update_chart(that.data.platform, that.data.epicNickname);
+  });
+
+
 });
 
 Template.fortnitePlayer.helpers({

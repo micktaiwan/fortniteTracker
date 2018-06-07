@@ -18,34 +18,30 @@
 
     <h2>General</h2>
 
-    <table class="table">
+    <table class="table lead">
       <thead>
       <tr>
-        <th>Score</th>
-        <th>Matches Played</th>
-        <th>Wins</th>
-        <th>Win%</th>
-        <th>Kills</th>
-        <th>K/d</th>
-        <th>Kills Per Min</th>
-        <th>Time Played</th>
-        <th>Avg Survival Time</th>
+        <th width="16%">Kills</th>
+        <th width="16%">K/d</th>
+        <th width="16%">Matches Played</th>
+        <th width="16%">Wins</th>
+        <th width="16%">Win%</th>
+        <th width="16%">Score</th>
       </tr>
       </thead>
       <tbody>
       <tr>
-        <td>{{data.lifeTimeStats.[6].value}}</td>
+        <td>{{data.lifeTimeStats.[10].value}}</td>
+        <td>{{data.lifeTimeStats.[11].value}}</td>
         <td>{{data.lifeTimeStats.[7].value}}</td>
         <td>{{data.lifeTimeStats.[8].value}}</td>
         <td>{{data.lifeTimeStats.[9].value}}</td>
-        <td>{{data.lifeTimeStats.[10].value}}</td>
-        <td>{{data.lifeTimeStats.[11].value}}</td>
-        <td>{{data.lifeTimeStats.[12].value}}</td>
-        <td>{{data.lifeTimeStats.[13].value}}</td>
-        <td>{{data.lifeTimeStats.[14].value}}</td>
+        <td>{{data.lifeTimeStats.[6].value}}</td>
       </tr>
       </tbody>
     </table>
+
+    <div id="chart_div"></div>
 
     <div class="row">
       <div class="col-sm-4">
