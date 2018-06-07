@@ -3,7 +3,7 @@ import './fortnite-player.html';
 
 const update_chart = function(platform, nickname) {
 
-  console.log('updating chart');
+  console.log('updating chart...');
   // Load the Visualization API and the corechart package.
   google.charts.load('current', {'packages': ['corechart']});
 
@@ -13,7 +13,6 @@ const update_chart = function(platform, nickname) {
   function drawChart() {
 
     const history = FortniteHistory.find({epicNickname: nickname, platform: platform}, {sort: {createdAt: 1}}).fetch();
-    console.log(history);
     // Create the data table.
     const data = new google.visualization.DataTable();
     data.addColumn('datetime', 'Date');
@@ -23,7 +22,6 @@ const update_chart = function(platform, nickname) {
         [h.createdAt, h.data.stats.p2.kd.valueDec],
       ]);
     });
-    console.log(data);
     // Set chart options
     const options = {
       'title': 'Kills per death in Solo',
