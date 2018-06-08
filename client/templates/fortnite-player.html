@@ -80,19 +80,18 @@
           <option value="matches">Matches</option>
           <option value="wins">Wins</option>
         </select>
-
       </div>
       <div class="col-md-3">
         <input id="skipvalues" type="checkbox" checked> skip same consecutives values<br>
-
       </div>
       <div class="col-md-3">
         <input id="smooth" type="checkbox"> smooth lines
-
       </div>
     </div>
     <div id="chart_div">Displaying chart in 1s...</div>
-
+    <div class="zoomcontainer">
+      <input type="range" min="1" max="100" value="1" class="slider" id="zoom">
+    </div>
     <h2>Recent matches</h2>
 
     {{#each data.recentMatches}}

@@ -1,12 +1,12 @@
 import './fortnite-player.html';
 
-let platform, nickname, mode, stat, skipvalues, smooth;
+let platform, nickname, mode, stat, skipvalues, smooth, zoom;
 
 const update_chart = function() {
 
-  $('#chart_div').text('Displaying chart in 1s...');
+  // $('#chart_div').text('Displaying chart in 1s...');
   Meteor.setTimeout(function() {
-    console.log('updating chart', mode, stat, '...');
+    console.log('updating chart', mode, stat, zoom, '...');
     if(!$('#chart_div').get(0)) return console.error('no div');
 
     // Load the Visualization API and the corechart package.
@@ -23,10 +23,11 @@ const update_chart = function() {
       data.addColumn('datetime', 'Date');
       data.addColumn('number', 'Number');
       let newValue = 0, oldValue = 0;
-      let i = 0;
       const nb = history.length;
+      let i = 0;
       _.each(history, function(h) {
         i++;
+        if(i < zoom) return;
         if(mode === 'solo') newValue = h.data.stats.p2;
         else if(mode === 'duos') newValue = h.data.stats.p10;
         else if(mode === 'squads') newValue = h.data.stats.p9;
@@ -37,7 +38,6 @@ const update_chart = function() {
         else if(stat === 'kills') newValue = newValue.kills.valueInt;
         else if(stat === 'matches') newValue = newValue.matches.valueInt;
         else if(stat === 'wins') newValue = newValue.top1.valueInt;
-
 
         if(skipvalues && i < nb && newValue === oldValue) return; // skipping same consecutive value, except the last one
         oldValue = newValue;
@@ -61,10 +61,13 @@ const update_chart = function() {
       // Instantiate and draw our chart, passing in some options.
       const chart = new google.visualization.LineChart($('#chart_div').get(0));
       chart.draw(data, options);
+      // slider
+      $("#zoom").get(0).max = nb;
     }
 
     // Set a callback to run when the Google Visualization API is loaded.
     google.charts.setOnLoadCallback(drawChart);
+
   }, 200);
 };
 
@@ -79,6 +82,7 @@ Template.fortnitePlayer.onRendered(function() {
   stat = 'kd';
   skipvalues = true;
   smooth = false;
+  zoom = 1;
 
   const that = this;
   this.autorun(function() {
@@ -153,6 +157,11 @@ Template.fortnitePlayer.events({
 
   'change #smooth'() {
     smooth = $('#smooth').prop('checked');
+    update_chart()
+  },
+
+  'input #zoom'() {
+    zoom = $('#zoom').get(0).value;
     update_chart()
   }
 
