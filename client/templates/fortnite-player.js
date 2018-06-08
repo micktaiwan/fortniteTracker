@@ -1,13 +1,12 @@
 import './fortnite-player.html';
 
-let platform, nickname;
-let mode = 'solo';
+let platform, nickname, mode, stat, skipvalues, smooth;
 
 const update_chart = function() {
 
   $('#chart_div').text('Displaying chart in 1s...');
   Meteor.setTimeout(function() {
-    console.log('updating chart...');
+    console.log('updating chart', mode, stat, '...');
     if(!$('#chart_div').get(0)) return console.error('no div');
 
     // Load the Visualization API and the corechart package.
@@ -22,17 +21,25 @@ const update_chart = function() {
       // Create the data table.
       const data = new google.visualization.DataTable();
       data.addColumn('datetime', 'Date');
-      data.addColumn('number', 'K/d');
+      data.addColumn('number', 'Number');
       let newValue = 0, oldValue = 0;
       let i = 0;
       const nb = history.length;
       _.each(history, function(h) {
         i++;
-        if(mode === 'solo') newValue = h.data.stats.p2.kd.valueDec;
-        else if(mode === 'duos') newValue = h.data.stats.p10.kd.valueDec;
-        else if(mode === 'squads') newValue = h.data.stats.p9.kd.valueDec;
+        if(mode === 'solo') newValue = h.data.stats.p2;
+        else if(mode === 'duos') newValue = h.data.stats.p10;
+        else if(mode === 'squads') newValue = h.data.stats.p9;
 
-        if(i < nb && newValue === oldValue) return; // skipping same consecutive value, except the last one
+        if(stat === 'kd') newValue = newValue.kd.valueDec;
+        else if(stat === 'winsp') newValue = newValue.winRatio.valueDec;
+        else if(stat === 'score') newValue = newValue.score.valueInt;
+        else if(stat === 'kills') newValue = newValue.kills.valueInt;
+        else if(stat === 'matches') newValue = newValue.matches.valueInt;
+        else if(stat === 'wins') newValue = newValue.top1.valueInt;
+
+
+        if(skipvalues && i < nb && newValue === oldValue) return; // skipping same consecutive value, except the last one
         oldValue = newValue;
         data.addRows([
           [h.createdAt, newValue],
@@ -40,15 +47,16 @@ const update_chart = function() {
       });
       // Set chart options
       const options = {
-        'title': 'Kills per death in Solo',
-        // curveType: 'function',
+        // 'title': 'Kills per death in Solo',
         lineWidth: 3,
-        pointSize: 10,
         // pointShape: 'square',
-        pointColor: '#fff',
         'width': '100%',
         'height': 300
       };
+      if(smooth)
+        options.curveType = 'function';
+      else
+        options.pointSize = 10;
 
       // Instantiate and draw our chart, passing in some options.
       const chart = new google.visualization.LineChart($('#chart_div').get(0));
@@ -57,7 +65,7 @@ const update_chart = function() {
 
     // Set a callback to run when the Google Visualization API is loaded.
     google.charts.setOnLoadCallback(drawChart);
-  }, 1000);
+  }, 200);
 };
 
 Template.fortnitePlayer.onCreated(function() {
@@ -66,6 +74,11 @@ Template.fortnitePlayer.onCreated(function() {
 });
 
 Template.fortnitePlayer.onRendered(function() {
+
+  mode = 'solo';
+  stat = 'kd';
+  skipvalues = true;
+  smooth = false;
 
   const that = this;
   this.autorun(function() {
@@ -126,7 +139,23 @@ Template.fortnitePlayer.events({
   'change #mode'() {
     mode = $('#mode').val();
     update_chart()
+  },
+
+  'change #stat'() {
+    stat = $('#stat').val();
+    update_chart()
+  },
+
+  'change #skipvalues'() {
+    skipvalues = $('#skipvalues').prop('checked');
+    update_chart()
+  },
+
+  'change #smooth'() {
+    smooth = $('#smooth').prop('checked');
+    update_chart()
   }
+
 
 });
 

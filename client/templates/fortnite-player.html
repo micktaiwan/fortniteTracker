@@ -63,11 +63,34 @@
       </div>
     </div>
 
-  <select id="mode" class="form-control">
-    <option value="solo">Solo</option>
-    <option value="duos">Duos</option>
-    <option value="squads">Squads</option>
-  </select>
+    <div class="row">
+      <div class="col-md-3">
+        <select id="mode" class="form-control">
+          <option value="solo">Solo</option>
+          <option value="duos">Duos</option>
+          <option value="squads">Squads</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select id="stat" class="form-control">
+          <option value="kd">K/d</option>
+          <option value="winsp">Wins %</option>
+          <option value="score">Score</option>
+          <option value="kills">Kills</option>
+          <option value="matches">Matches</option>
+          <option value="wins">Wins</option>
+        </select>
+
+      </div>
+      <div class="col-md-3">
+        <input id="skipvalues" type="checkbox" checked> skip same consecutives values<br>
+
+      </div>
+      <div class="col-md-3">
+        <input id="smooth" type="checkbox"> smooth lines
+
+      </div>
+    </div>
     <div id="chart_div">Displaying chart in 1s...</div>
 
     <h2>Recent matches</h2>
