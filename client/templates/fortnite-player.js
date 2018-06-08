@@ -1,8 +1,11 @@
 import './fortnite-player.html';
 
+let platform, nickname;
+let mode = 'solo';
 
-const update_chart = function(platform, nickname) {
+const update_chart = function() {
 
+  $('#chart_div').text('Displaying chart in 1s...');
   Meteor.setTimeout(function() {
     console.log('updating chart...');
     if(!$('#chart_div').get(0)) return console.error('no div');
@@ -20,15 +23,19 @@ const update_chart = function(platform, nickname) {
       const data = new google.visualization.DataTable();
       data.addColumn('datetime', 'Date');
       data.addColumn('number', 'K/d');
-      let value = 0;
+      let newValue = 0, oldValue = 0;
       let i = 0;
       const nb = history.length;
       _.each(history, function(h) {
         i++;
-        if(i < nb && h.data.stats.p2.kd.valueDec === value) return; // skipping same consecutive value, except the last one
-        value = h.data.stats.p2.kd.valueDec;
+        if(mode === 'solo') newValue = h.data.stats.p2.kd.valueDec;
+        else if(mode === 'duos') newValue = h.data.stats.p10.kd.valueDec;
+        else if(mode === 'squads') newValue = h.data.stats.p9.kd.valueDec;
+
+        if(i < nb && newValue === oldValue) return; // skipping same consecutive value, except the last one
+        oldValue = newValue;
         data.addRows([
-          [h.createdAt, value],
+          [h.createdAt, newValue],
         ]);
       });
       // Set chart options
@@ -64,7 +71,9 @@ Template.fortnitePlayer.onRendered(function() {
   this.autorun(function() {
     if(!Session.get('googleChartsOK')) return;
 
-    if(that.data && that.data.platform && that.data.epicNickname)
+    if(that.data && that.data.platform && that.data.epicNickname) {
+      platform = that.data.platform;
+      nickname = that.data.epicNickname;
       Meteor.call('fortnite', that.data.platform, that.data.epicNickname, function(err, msg) {
         if(err) return console.error(err);
         if(msg) console.log(msg);
@@ -72,9 +81,11 @@ Template.fortnitePlayer.onRendered(function() {
           update_chart(that.data.platform, that.data.epicNickname);
         });
       });
-    else that.subscribe('fortniteHistoryPlayer', that.data.platform, that.data.epicNickname, function() {
-      update_chart(that.data.platform, that.data.epicNickname);
-    });
+    }
+    else
+      that.subscribe('fortniteHistoryPlayer', that.data.platform, that.data.epicNickname, function() {
+        update_chart(that.data.platform, that.data.epicNickname);
+      });
 
   });
 
@@ -106,6 +117,15 @@ Template.fortnitePlayer.helpers({
     this.data.stats[g].group = g;
     this.data.stats[g].groupText = groupText[g];
     return this.data.stats[g];
+  }
+
+});
+
+Template.fortnitePlayer.events({
+
+  'change #mode'() {
+    mode = $('#mode').val();
+    update_chart()
   }
 
 });
