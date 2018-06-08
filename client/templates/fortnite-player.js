@@ -20,8 +20,13 @@ const update_chart = function(platform, nickname) {
       const data = new google.visualization.DataTable();
       data.addColumn('datetime', 'Date');
       data.addColumn('number', 'K/d');
+      let value = 0;
+      let i = 0;
+      const nb = history.length;
       _.each(history, function(h) {
-        const value = h.data.stats.p2.kd.valueDec;
+        i++;
+        if(i < nb && h.data.stats.p2.kd.valueDec === value) return; // skipping same consecutive value, except the last one
+        value = h.data.stats.p2.kd.valueDec;
         data.addRows([
           [h.createdAt, value],
         ]);
