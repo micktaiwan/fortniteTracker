@@ -22,7 +22,8 @@ Package.onUse(function(api) {
     'templating',
     'pcel:serialize',
     'fortawesome:fontawesome',
-    'percolate:synced-cron'
+    'percolate:synced-cron',
+    'orbiter:core@0.0.3'
   ]);
 
   api.add_files([

@@ -28,9 +28,43 @@ const update_chart = function() {
       _.each(history, function(h) {
         i++;
         if(i < zoom) return;
-        if(mode === 'solo') newValue = h.data.stats.p2;
+        if(mode === 'global') {
+          newValue = h.data.lifeTimeStats;
+          console.log(h.data, newValue);
+          newValue.kd = {valueDec: parseFloat(newValue[11].value)};
+          newValue.kills = {valueInt: parseInt(newValue[10].value)};
+          newValue.matches = {valueInt: parseInt(newValue[7].value)};
+          newValue.score = {valueInt: parseInt(newValue[6].value.replace(/\,/g, ''))};
+          newValue.winRatio = {valueDec: parseFloat(newValue[9].value)};
+          newValue.top1 = {valueInt: parseInt(newValue[8].value)};
+
+          /*
+                    <tr>
+                    <th width="16%">Kills</th>
+                      <th width="16%">K/d</th>
+                      <th width="16%">Matches Played</th>
+                    <th width="16%">Wins</th>
+                      <th width="16%">Win%</th>
+                      <th width="16%">Score</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                      <td>{{data.lifeTimeStats.[10].value}}</td>
+                    <td>{{data.lifeTimeStats.[11].value}}</td>
+                    <td>{{data.lifeTimeStats.[7].value}}</td>
+                    <td>{{data.lifeTimeStats.[8].value}}</td>
+                    <td>{{data.lifeTimeStats.[9].value}}</td>
+                    <td>{{data.lifeTimeStats.[6].value}}</td>
+          */
+
+
+        }
+        else if(mode === 'solo') newValue = h.data.stats.p2;
         else if(mode === 'duos') newValue = h.data.stats.p10;
         else if(mode === 'squads') newValue = h.data.stats.p9;
+
+        console.log(newValue);
 
         if(stat === 'kd') newValue = newValue.kd.valueDec;
         else if(stat === 'winsp') newValue = newValue.winRatio.valueDec;
@@ -78,7 +112,7 @@ Template.fortnitePlayer.onCreated(function() {
 
 Template.fortnitePlayer.onRendered(function() {
 
-  mode = 'solo';
+  mode = 'global';
   stat = 'kd';
   skipvalues = true;
   smooth = false;
