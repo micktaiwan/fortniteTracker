@@ -14,7 +14,7 @@ Meteor.methods({
       const lastTime = last.createdAt.getTime();
       const nowTime = now.getTime();
       diff = nowTime / 1000 - lastTime / 1000;
-      if(diff < 60 * 5) return pseudo + "'s data last fetched " + Math.round(diff) + 's ago (less than 5 min, so not fetched)';
+      if(diff < 60 * 5) return pseudo + "'s data already fetched " + Math.round(diff) + 's ago (< 5 min)';
     }
 
     const apikey = Meteor.settings.fortniteAPIKey;
@@ -28,16 +28,16 @@ Meteor.methods({
         }
       }, function(error, result) {
         if(error) {
-          console.error('http get FAILED!');
+          orbiter.core.displayMessage('http get FAILED!', 'error');
           console.log(error);
         }
         else {
           // console.log(result);
           if(result.statusCode === 200) {
             if(!result.data)
-              console.error('no data for ' + pseudo);
+              orbiter.core.displayMessage('no data for ' + pseudo, 'error');
             else if(result.data.error)
-              console.error(result.data.error);
+              orbiter.core.displayMessage(result.data.error, 'error');
             else {
               FortniteHistory.insert({
                 "platform": platform,
